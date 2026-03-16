@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import { featuredMatches } from '../data/featuredMatches'
 import type { Match } from '../types/match'
 
@@ -30,10 +30,13 @@ export function useMatches() {
     setActiveFilter('all')
   }
 
-  const visibleMatches =
-    activeFilter === 'all'
-      ? matches
-      : matches.filter((match) => match.status === activeFilter)
+  const visibleMatches = useMemo(() => {
+    if (activeFilter === 'all') {
+      return matches
+    }
+
+    return matches.filter((match) => match.status === activeFilter)
+  }, [matches, activeFilter])
 
   return {
     matches,
