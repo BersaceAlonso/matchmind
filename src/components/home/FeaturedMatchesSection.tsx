@@ -1,35 +1,13 @@
-import { useState, useEffect } from 'react'
 import MatchCard from '../match/MatchCard'
-import MatchFilters, { type MatchFilter } from '../match/MatchFilters'
+import MatchFilters from '../match/MatchFilters'
 import Container from '../ui/Container'
 import SectionHeading from '../ui/SectionHeading'
-import { featuredMatches } from '../../data/featuredMatches'
-import type { Match } from '../../types/match'
 import AddMatchForm from '../match/AddMatchForm'
+import { useMatches } from '../../hooks/useMatches'
 
 function FeaturedMatchesSection() {
-  const [activeFilter, setActiveFilter] = useState<MatchFilter>('all')
-  const [matches, setMatches] = useState<Match[]>(() => {
-    const storedMatches = localStorage.getItem('matchmind-matches')
-
-    if (storedMatches) {
-      try {
-        return JSON.parse(storedMatches)
-      } catch {
-        return featuredMatches
-      }
-    }
-    return featuredMatches
-  })
-
-  useEffect(() => {
-    localStorage.setItem('matchmind-matches', JSON.stringify(matches))
-  }, [matches])
-
-  const visibleMatches =
-    activeFilter === 'all'
-      ? matches
-      : matches.filter((match) => match.status === activeFilter)
+  const { visibleMatches, activeFilter, setActiveFilter, addMatch } =
+    useMatches()
 
   return (
     <section className="py-16">
@@ -40,12 +18,7 @@ function FeaturedMatchesSection() {
           description="Cette liste est maintenant interactive : tu peux filtrer les matchs affichés et en ajouter de nouveaux."
         />
 
-        <AddMatchForm
-          onAddMatch={(newMatch) => {
-            setMatches((currentMatches) => [newMatch, ...currentMatches])
-            setActiveFilter('all')
-          }}
-        />
+        <AddMatchForm onAddMatch={addMatch} />
 
         <MatchFilters
           activeFilter={activeFilter}
