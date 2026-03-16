@@ -30,6 +30,12 @@ export function useMatches() {
     setActiveFilter('all')
   }
 
+  function deleteMatch(id: number) {
+    setMatches((currentMatches) =>
+      currentMatches.filter((match) => match.id !== id)
+    )
+  }
+
   const visibleMatches = useMemo(() => {
     if (activeFilter === 'all') {
       return matches
@@ -44,5 +50,6 @@ export function useMatches() {
     activeFilter,
     setActiveFilter,
     addMatch,
+    deleteMatch,
   }
 }
