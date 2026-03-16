@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import MatchCard from '../match/MatchCard'
 import MatchFilters, { type MatchFilter } from '../match/MatchFilters'
 import Container from '../ui/Container'
@@ -9,7 +9,22 @@ import AddMatchForm from '../match/AddMatchForm'
 
 function FeaturedMatchesSection() {
   const [activeFilter, setActiveFilter] = useState<MatchFilter>('all')
-  const [matches, setMatches] = useState<Match[]>(featuredMatches)
+  const [matches, setMatches] = useState<Match[]>(() => {
+    const storedMatches = localStorage.getItem('matchmind-matches')
+
+    if (storedMatches) {
+      try {
+        return JSON.parse(storedMatches)
+      } catch {
+        return featuredMatches
+      }
+    }
+    return featuredMatches
+  })
+
+  useEffect(() => {
+    localStorage.setItem('matchmind-matches', JSON.stringify(matches))
+  }, [matches])
 
   const visibleMatches =
     activeFilter === 'all'
